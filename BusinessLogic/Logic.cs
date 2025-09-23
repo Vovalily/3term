@@ -13,7 +13,16 @@ namespace BusinessLogic
     public class Logic
     {
         private List<Player> players = new List<Player>();
-
+        /// <summary>
+        /// Валидация игрока
+        /// </summary>
+        /// <param name="id">Номер игрока</param>
+        /// <param name="name">Имя игрока</param>
+        /// <param name="level">Уровень игрока</param>
+        /// <param name="score">Кол-во очков</param>
+        /// <param name="rank">Название ранга</param>
+        /// <param name="time">Время регистрации</param>
+        /// <returns>True или false</returns>
         public bool Validate(int id, string name, int level, int score, string rank, DateTime time)
         {
             if (string.IsNullOrWhiteSpace(name) || level <= 0 || score < 0 ||  string.IsNullOrWhiteSpace(rank) || time == DateTime.MinValue)
@@ -22,7 +31,16 @@ namespace BusinessLogic
             }
             return true;
         }
-
+        /// <summary>
+        /// Создание ирока
+        /// </summary>
+        /// <param name="id">Номер игрока</param>
+        /// <param name="name">Имя игрока</param>
+        /// <param name="level">Уровень игрока</param>
+        /// <param name="score">Кол-во очков</param>
+        /// <param name="rank">Название ранга</param>
+        /// <param name="time">Время регистрации</param>
+        /// <exception cref="ArgumentException">Выводит сообщение при ошибке</exception>
         public void Create(int id, string name, int level, int score, string rank, DateTime time) 
         {     
             if (Validate(id, name, level, score, rank, time) == true)
@@ -36,6 +54,10 @@ namespace BusinessLogic
             }
 
         }
+        /// <summary>
+        /// Показывает всех игроков
+        /// </summary>
+        /// <returns>Список игроков</returns>
         public List<List<string>> Read()
         {
             List<List<string>> allPlayers = new List<List<string>>();
@@ -55,7 +77,16 @@ namespace BusinessLogic
             }
             return allPlayers;
         }
-
+        /// <summary>
+        /// Изменяет выбранного игрока
+        /// </summary>
+        /// <param name="id">Номер игрока</param>
+        /// <param name="name">Имя игрока</param>
+        /// <param name="level">Уровень игрока</param>
+        /// <param name="score">Кол-во очков</param>
+        /// <param name="rank">Название ранга</param>
+        /// <param name="time">Время регистрации</param>
+        /// <exception cref="ArgumentException">Выводит сообщение при ошибке</exception>
         public void Update(int id, string name, int level, int score, string rank, DateTime time)
         {
 
@@ -78,6 +109,11 @@ namespace BusinessLogic
             player.RegistrationDate = time;
 
         }
+        /// <summary>
+        /// Удаляет выбранного игрока
+        /// </summary>
+        /// <param name="id"></param>
+        /// <exception cref="ArgumentException">Выводит сообщение при ошибке</exception>
         public void Delete(int id)
         {
             var player = players.FirstOrDefault(p => p.Id == id);
@@ -90,7 +126,10 @@ namespace BusinessLogic
                 throw new ArgumentException($"Игрок с Id={id} не найден");
             }
         }
-
+        /// <summary>
+        /// Группирует игроков по рангу
+        /// </summary>
+        /// <returns>Список игроков с одинаковым рангом</returns>
         public Dictionary<string, List<Player>> RankGroup()
         {
            
@@ -100,7 +139,12 @@ namespace BusinessLogic
 
             return grouped;
         }
-
+        /// <summary>
+        /// Фильтрует игроков по дата 
+        /// </summary>
+        /// <param name="startDate">Первая дата</param>
+        /// <param name="endDate">Вторая дата</param>
+        /// <returns>Список игроков зарегистрированных в выбранный промежуток</returns>
         public List<Player> DateGroup(DateTime startDate, DateTime endDate)
         {
             var filteredPlayers = players
