@@ -24,6 +24,7 @@ namespace ConsoleApp1
                 Console.WriteLine("4. Удалить игрока");
                 Console.WriteLine("5. Группировка по рангу");
                 Console.WriteLine("6. Фильтр по дате");
+                Console.WriteLine("7. Сражение");
                 Console.WriteLine("0. Выход");
                 Console.Write("Выберите действие: ");
 
@@ -50,6 +51,9 @@ namespace ConsoleApp1
                     case "6":
                         ShowPlayersByDate();
                         break;
+                    case "7":
+                        Battle();
+                        break;
                     case "0":
                         exit = true;
                         break;
@@ -64,9 +68,6 @@ namespace ConsoleApp1
         {
             try
             {
-                Console.Write("Id: ");
-                int id = int.Parse(Console.ReadLine());
-
                 Console.Write("Имя: ");
                 string name = Console.ReadLine();
 
@@ -82,7 +83,7 @@ namespace ConsoleApp1
                 Console.Write("Дата регистрации (дд.мм.гггг): ");
                 DateTime date = DateTime.Parse(Console.ReadLine());
 
-                logic.Create(id, name, level, score, rank, date);
+                logic.Create(name, level, score, rank, date);
                 Console.WriteLine("Игрок создан успешно!");
             }
             catch (Exception ex)
@@ -93,7 +94,7 @@ namespace ConsoleApp1
 
         static void ShowAllPlayers()
         {
-            var players = logic.Read();
+            var players = logic.ReadAll();
             if (players.Count == 0)
             {
                 Console.WriteLine("Игроков нет.");
@@ -111,8 +112,9 @@ namespace ConsoleApp1
         {
             try
             {
-                Console.Write("Id игрока для обновления: ");
+                Console.Write("Введите id игрока");
                 int id = int.Parse(Console.ReadLine());
+
 
                 Console.Write("Новое имя: ");
                 string name = Console.ReadLine();
@@ -199,6 +201,26 @@ namespace ConsoleApp1
             }
             catch (Exception ex)
             {
+                Console.WriteLine($"Ошибка: {ex.Message}");
+            }
+        }
+
+        static void Battle()
+        {
+            try
+            {
+                Console.Write("Введите id первого игрока ");
+                int idOne = int.Parse(Console.ReadLine());
+
+                Console.Write("Введите id второго игрока ");
+                int idTwo = int.Parse(Console.ReadLine());
+                
+                Console.WriteLine(logic.Battle(idOne, idTwo));
+
+            }
+            catch (Exception ex)
+            {
+
                 Console.WriteLine($"Ошибка: {ex.Message}");
             }
         }

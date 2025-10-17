@@ -13,6 +13,7 @@ namespace BusinessLogic
     public class Logic
     {
         private List<Player> players = new List<Player>();
+        private int id = 1;
         /// <summary>
         /// Валидация игрока
         /// </summary>
@@ -23,7 +24,7 @@ namespace BusinessLogic
         /// <param name="rank">Название ранга</param>
         /// <param name="time">Время регистрации</param>
         /// <returns>True или false</returns>
-        public bool Validate(int id, string name, int level, int score, string rank, DateTime time)
+        private bool Validate(string name, int level, int score, string rank, DateTime time)
         {
             if (string.IsNullOrWhiteSpace(name) || level <= 0 || score < 0 ||  string.IsNullOrWhiteSpace(rank) || time == DateTime.MinValue)
             {
@@ -32,7 +33,7 @@ namespace BusinessLogic
             return true;
         }
         /// <summary>
-        /// Создание ирока
+        /// Создание игрока
         /// </summary>
         /// <param name="id">Номер игрока</param>
         /// <param name="name">Имя игрока</param>
@@ -41,12 +42,14 @@ namespace BusinessLogic
         /// <param name="rank">Название ранга</param>
         /// <param name="time">Время регистрации</param>
         /// <exception cref="ArgumentException">Выводит сообщение при ошибке</exception>
-        public void Create(int id, string name, int level, int score, string rank, DateTime time) 
+        public void Create(string name, int level, int score, string rank, DateTime time) 
         {     
-            if (Validate(id, name, level, score, rank, time) == true)
+
+            if (Validate(name, level, score, rank, time) == true)
             {
                 Player newPlayer = new Player(id, name, level, score, rank, time);
                 players.Add(newPlayer);
+                id++;
             }
             else
             {
@@ -58,7 +61,7 @@ namespace BusinessLogic
         /// Показывает всех игроков
         /// </summary>
         /// <returns>Список игроков</returns>
-        public List<List<string>> Read()
+        public List<List<string>> ReadAll()
         {
             List<List<string>> allPlayers = new List<List<string>>();
             foreach (Player player in players) 
@@ -98,7 +101,7 @@ namespace BusinessLogic
             }
 
 
-            if (Validate(id, name, level, score, rank, time) == false)
+            if (Validate(name, level, score, rank, time) == false)
             {
                 throw new ArgumentException($"Игрок не создан");
             }
@@ -154,6 +157,29 @@ namespace BusinessLogic
             return filteredPlayers;
         }
 
+        public string Battle(int idFirst, int idTwo)
+        {
+            var playerOne = players.FirstOrDefault(p => p.Id == idFirst);
+            var playerTwo = players.FirstOrDefault(p => p.Id == idTwo);
+
+            if (playerOne == null || playerTwo == null)
+            {
+                throw new ArgumentException($"Неправильные id игроков");
+            }
+            
+            var rand = new Random();
+            int score = rand.Next(0, 100);
+            int result = rand.Next(0,2);
+            if(result == 0)
+            {
+                playerOne.Score += score;
+                playerTwo.Score -= score;
+                return $"Выиграл первый + {score} очков второй проиграл - {score}";
+            }
+            playerOne.Score -= score;
+            playerTwo.Score += score;
+            return $"$Выиграл второй +  {score} очков первый проиграл - {score}"
+;        }
 
     }
 }

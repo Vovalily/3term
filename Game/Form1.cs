@@ -24,14 +24,14 @@ namespace Game
             try
             {
                 
-                int id = int.Parse(textBoxId.Text);
+                //int id = int.Parse(textBoxId.Text);
                 string name = textBoxName.Text;
                 int level = int.Parse(textBoxLevel.Text);
                 int score = int.Parse(textBoxScore.Text);
                 string rank = textBoxRank.Text;
-                DateTime date = DateTime.Parse(textBoxDate.Text); 
+                DateTime date = DateTime.Parse(dateTimePicker1.Text); 
                
-                logic.Create(id, name, level, score, rank, date);
+                logic.Create(name, level, score, rank, date);
 
                 MessageBox.Show("Игрок создан!", "Успех", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
@@ -73,7 +73,7 @@ namespace Game
                 int level = int.Parse(textBoxLevel.Text);
                 int score = int.Parse(textBoxScore.Text);
                 string rank = textBoxRank.Text;
-                DateTime date = DateTime.Parse(textBoxDate.Text);
+                DateTime date = DateTime.Parse(dateTimePicker1.Text);
 
                 logic.Update(id, name, level, score, rank, date);
 
@@ -111,8 +111,8 @@ namespace Game
         {
             try
             {
-                DateTime start = DateTime.Parse(textBoxStartDate.Text);
-                DateTime end = DateTime.Parse(textBoxEndDate.Text);
+                DateTime start = DateTime.Parse(dateTimePickerStartC.Text);
+                DateTime end = DateTime.Parse(dateTimePickerEndDate.Text);
 
                
                 var filteredPlayers = logic.DateGroup(start, end)
@@ -125,7 +125,7 @@ namespace Game
                                        p.Rank,
                                        p.RegistrationDate.ToString("dd.MM.yyyy")
                                            }).ToList();
-
+                    
                 RefreshGrid(filteredPlayers);
             }
             catch (Exception ex)
@@ -137,7 +137,7 @@ namespace Game
 
         private void RefreshGrid(List<List<string>> players = null)
         {
-            var allPlayers = players ?? logic.Read(); 
+            var allPlayers = players ?? logic.ReadAll(); 
 
             var table = new DataTable();
             table.Columns.Add("Id");
@@ -162,7 +162,6 @@ namespace Game
             textBoxLevel.Clear();
             textBoxScore.Clear();
             textBoxRank.Clear();
-            textBoxDate.Clear();
         }
         private void DataGridViewPlayers_SelectionChanged(object sender, EventArgs e)
         {
@@ -177,7 +176,7 @@ namespace Game
                 textBoxLevel.Text = row.Cells["Уровень"].Value.ToString();
                 textBoxScore.Text = row.Cells["Очки"].Value.ToString();
                 textBoxRank.Text = row.Cells["Ранг"].Value.ToString();
-                textBoxDate.Text = row.Cells["Дата регистрации"].Value.ToString();
+                dateTimePicker1.Text = row.Cells["Дата регистрации"].Value.ToString();
             }
         }
         private void dataGridViewPlayers_CellContentClick(object sender, DataGridViewCellEventArgs e)
@@ -251,5 +250,32 @@ namespace Game
                 MessageBox.Show($"Ошибка: {ex.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
+        private void button2_Click_1(object sender, EventArgs e) // battle
+        {
+            try
+            {
+                int idOne = int.Parse(textBoxIdOne.Text);
+                int idTwo = int.Parse(textBoxIdTwo.Text);
+
+                MessageBox.Show(logic.Battle(idOne, idTwo), "Результат", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                RefreshGrid();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка: {ex.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void label13_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label14_Click(object sender, EventArgs e)
+        {
+
+        }
+
+
     }
 }
