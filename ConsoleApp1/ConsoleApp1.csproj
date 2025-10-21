@@ -34,6 +34,10 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\BusinessLogic\BusinessLogic.csproj" />
+    <ProjectReference Include="..\Model\Model.csproj">
+      <Project>{db038414-d546-4adb-9a3e-5776c3281fd4}</Project>
+      <Name>Model</Name>
+    </ProjectReference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />

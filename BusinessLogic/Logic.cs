@@ -1,4 +1,5 @@
-﻿using Model;
+﻿using DataAccessLayer;
+using Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,6 +13,8 @@ namespace BusinessLogic
 {
     public class Logic
     {
+        //private IRepository<Player> players = new List<Player>();
+
         private List<Player> players = new List<Player>();
         /// <summary>
         /// Валидация игрока
@@ -32,7 +35,7 @@ namespace BusinessLogic
             return true;
         }
         /// <summary>
-        /// Создание ирока
+        /// Создание игрока
         /// </summary>
         /// <param name="id">Номер игрока</param>
         /// <param name="name">Имя игрока</param>
