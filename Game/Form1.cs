@@ -18,20 +18,18 @@ namespace Game
         {
             InitializeComponent();
         }
-        private Logic logic = new Logic();
+        private Logic logic = new Logic(false);
         private void button1_Click(object sender, EventArgs e) // create
         {
             try
             {
-                
-                int id = int.Parse(textBoxId.Text);
                 string name = textBoxName.Text;
                 int level = int.Parse(textBoxLevel.Text);
                 int score = int.Parse(textBoxScore.Text);
                 string rank = textBoxRank.Text;
                 DateTime date = DateTime.Parse(textBoxDate.Text); 
                
-                logic.Create(id, name, level, score, rank, date);
+                logic.Create(name, level, score, rank, date);
 
                 MessageBox.Show("Игрок создан!", "Успех", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
@@ -162,7 +160,6 @@ namespace Game
             textBoxLevel.Clear();
             textBoxScore.Clear();
             textBoxRank.Clear();
-            textBoxDate.Clear();
         }
         private void DataGridViewPlayers_SelectionChanged(object sender, EventArgs e)
         {

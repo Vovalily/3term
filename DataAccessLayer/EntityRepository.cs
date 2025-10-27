@@ -38,13 +38,23 @@ namespace DataAccessLayer
             player.Rank = obj.Rank;
             player.Score = obj.Score;
             player.RegistrationDate = obj.RegistrationDate;
-            
+            _context.SaveChanges();
+
         }
         public void Delete(Player obj) 
-        { 
-            _context.Set<Player>().Remove(obj);
-            _context.SaveChanges();
+        {
+            var player = _context.Players.Find(obj.Id);
+            if (player != null)
+            {
+                _context.Players.Remove(player);
+                _context.SaveChanges();
+            }
+            ;
         }
-        
+        public void Dispose()
+        {
+            _context?.Dispose();
+        }
+
     }
 }

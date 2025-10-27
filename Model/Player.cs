@@ -18,9 +18,8 @@ namespace Model
 
         public Player() { }
 
-        public Player(int id, string name, int level, int score, string rank, DateTime time)
+        public Player(string name, int level, int score, string rank, DateTime time)
         {
-            Id = id;
             Name = name;
             Level = level;
             Score = score;

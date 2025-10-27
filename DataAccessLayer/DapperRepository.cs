@@ -15,65 +15,80 @@ namespace DataAccessLayer
 
         private string connectionString;
 
-        public DapperRepository(string connectionString)
+        public DapperRepository()
         {
-            this.connectionString = connectionString;
-        }
-       
-        private void UseScript(string script)
-        {
-            if (string.IsNullOrEmpty(script))
-            {
-                using (IDbConnection db = new SqlConnection(connectionString))
-                {
-                    db.Execute(script);
-                }
-            }
+            this.connectionString = System.Configuration.ConfigurationManager
+                .ConnectionStrings["DefaultConnection"].ConnectionString;
         }
 
+       
         public void Create(Player player)
         {
-            string script = "INSERT INTO Players (Name, Level, Score, Rank, RegistrationDate) VALUES(" + player.Name + player.Level + player.Score + player.Score + player.RegistrationDate +")";
-            UseScript(script);
+            string script = @"INSERT INTO Players (Name, Level, Score, Rank, RegistrationDate) 
+                             VALUES (@Name, @Level, @Score, @Rank, @RegistrationDate)";
+
+            using (IDbConnection db = new SqlConnection(connectionString))
+            {
+                db.Execute(script, new
+                {
+                    Name = player.Name,
+                    Level = player.Level,
+                    Score = player.Score,
+                    Rank = player.Rank,
+                    RegistrationDate = player.RegistrationDate
+                });
+            }
         }
 
         public IEnumerable<Player> ReadAll()
         {
-            List<Player> players;
             using (IDbConnection db = new SqlConnection(connectionString))
             {
-                players = db.Query<Player>("SELECT * FROM Players ").ToList();
-
+                return db.Query<Player>("SELECT * FROM Players").ToList();
             }
-            return players;
-
         }
 
 
         public Player ReadById(int id)
         {
-            Player players;
             using (IDbConnection db = new SqlConnection(connectionString))
             {
-                players = db.Query<Player>("SELECT * FROM Players WHERE Id = " + id).FirstOrDefault();
-
+                return db.Query<Player>("SELECT * FROM Players WHERE Id = @Id", new { Id = id })
+                       .FirstOrDefault();
             }
-            return players;
         }
-            
+
 
         public void Update(Player player)
         {
-            string script = "UPDATE Players SET Name, Level, Score, Rank, RegistrationDate  = '" + 
-                player.Name + player.Level + player.Score + player.Score + player.RegistrationDate +
-                "' WHERE Id = " + player.Id;
-            UseScript(script);
+            string script = @"UPDATE Players 
+                             SET Name = @Name, 
+                                 Level = @Level, 
+                                 Score = @Score, 
+                                 Rank = @Rank, 
+                                 RegistrationDate = @RegistrationDate 
+                             WHERE Id = @Id";
+
+            using (IDbConnection db = new SqlConnection(connectionString))
+            {
+                db.Execute(script, new
+                {
+                    Id = player.Id,
+                    Name = player.Name,
+                    Level = player.Level,
+                    Score = player.Score,
+                    Rank = player.Rank,
+                    RegistrationDate = player.RegistrationDate
+                });
+            }
         }
 
         public void Delete(Player player)
         {
-            string script = "DELETE FROM Players WHERE Id = " + player.Id;
-            UseScript(script);
+            using (IDbConnection db = new SqlConnection(connectionString))
+            {
+                db.Execute("DELETE FROM Players WHERE Id = @Id", new { Id = player.Id });
+            }
         }
     }
 }

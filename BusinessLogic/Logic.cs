@@ -13,9 +13,21 @@ namespace BusinessLogic
 {
     public class Logic
     {
-        //private IRepository<Player> players = new List<Player>();
+        private IRepository<Player> _repository;
 
-        private List<Player> players = new List<Player>();
+        public Logic(bool useDapper)
+    {
+        if (useDapper)
+        {
+            _repository = new DapperRepository();
+        }
+        else
+        {
+            var context = new DataContext();
+            _repository = new EntityRepository(context);
+        }
+    }
+
         /// <summary>
         /// Валидация игрока
         /// </summary>
@@ -26,7 +38,7 @@ namespace BusinessLogic
         /// <param name="rank">Название ранга</param>
         /// <param name="time">Время регистрации</param>
         /// <returns>True или false</returns>
-        public bool Validate(int id, string name, int level, int score, string rank, DateTime time)
+        public bool Validate( string name, int level, int score, string rank, DateTime time)
         {
             if (string.IsNullOrWhiteSpace(name) || level <= 0 || score < 0 ||  string.IsNullOrWhiteSpace(rank) || time == DateTime.MinValue)
             {
@@ -44,12 +56,12 @@ namespace BusinessLogic
         /// <param name="rank">Название ранга</param>
         /// <param name="time">Время регистрации</param>
         /// <exception cref="ArgumentException">Выводит сообщение при ошибке</exception>
-        public void Create(int id, string name, int level, int score, string rank, DateTime time) 
+        public void Create(string name, int level, int score, string rank, DateTime time) 
         {     
-            if (Validate(id, name, level, score, rank, time) == true)
+            if (Validate( name, level, score, rank, time) == true)
             {
-                Player newPlayer = new Player(id, name, level, score, rank, time);
-                players.Add(newPlayer);
+                Player newPlayer = new Player(name, level, score, rank, time);
+                _repository.Create(newPlayer);
             }
             else
             {
@@ -64,7 +76,7 @@ namespace BusinessLogic
         public List<List<string>> Read()
         {
             List<List<string>> allPlayers = new List<List<string>>();
-            foreach (Player player in players) 
+            foreach (Player player in _repository.ReadAll()) 
             {
                 List<string> listPlayers = new List<string>
                 {
@@ -93,7 +105,7 @@ namespace BusinessLogic
         public void Update(int id, string name, int level, int score, string rank, DateTime time)
         {
 
-            var player = players.FirstOrDefault(p => p.Id == id);
+            var player = _repository.ReadById(id);
 
             if (player == null)
             {
@@ -101,7 +113,7 @@ namespace BusinessLogic
             }
 
 
-            if (Validate(id, name, level, score, rank, time) == false)
+            if (Validate( name, level, score, rank, time) == false)
             {
                 throw new ArgumentException($"Игрок не создан");
             }
@@ -119,10 +131,10 @@ namespace BusinessLogic
         /// <exception cref="ArgumentException">Выводит сообщение при ошибке</exception>
         public void Delete(int id)
         {
-            var player = players.FirstOrDefault(p => p.Id == id);
+            var player = _repository.ReadById(id);
             if (player != null)
             {
-                players.Remove(player);
+                _repository.Delete(player);
             }
             else
             {
@@ -136,9 +148,10 @@ namespace BusinessLogic
         public Dictionary<string, List<Player>> RankGroup()
         {
            
+            var players = _repository.ReadAll();
             var grouped = players
-                .GroupBy(p => p.Rank)
-                .ToDictionary(g => g.Key, g => g.ToList());
+                            .GroupBy(p => p.Rank)
+                            .ToDictionary(g => g.Key, g => g.ToList());
 
             return grouped;
         }
@@ -150,6 +163,7 @@ namespace BusinessLogic
         /// <returns>Список игроков зарегистрированных в выбранный промежуток</returns>
         public List<Player> DateGroup(DateTime startDate, DateTime endDate)
         {
+            var players = _repository.ReadAll();
             var filteredPlayers = players
                 .Where(p => p.RegistrationDate >= startDate && p.RegistrationDate <= endDate)
                 .ToList();

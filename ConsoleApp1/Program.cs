@@ -9,7 +9,7 @@ namespace ConsoleApp1
 {
     public class Program
     {
-        static Logic logic = new Logic();
+        static Logic logic = new Logic(true);
 
         static void Main(string[] args)
         {
@@ -64,9 +64,6 @@ namespace ConsoleApp1
         {
             try
             {
-                Console.Write("Id: ");
-                int id = int.Parse(Console.ReadLine());
-
                 Console.Write("Имя: ");
                 string name = Console.ReadLine();
 
@@ -82,7 +79,7 @@ namespace ConsoleApp1
                 Console.Write("Дата регистрации (дд.мм.гггг): ");
                 DateTime date = DateTime.Parse(Console.ReadLine());
 
-                logic.Create(id, name, level, score, rank, date);
+                logic.Create(name, level, score, rank, date);
                 Console.WriteLine("Игрок создан успешно!");
             }
             catch (Exception ex)
