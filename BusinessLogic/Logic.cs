@@ -73,7 +73,7 @@ namespace BusinessLogic
         /// Показывает всех игроков
         /// </summary>
         /// <returns>Список игроков</returns>
-        public List<List<string>> Read()
+        public List<List<string>> ReadAll()
         {
             List<List<string>> allPlayers = new List<List<string>>();
             foreach (Player player in _repository.ReadAll()) 
@@ -171,6 +171,29 @@ namespace BusinessLogic
             return filteredPlayers;
         }
 
+        public string Battle(int idFirst, int idTwo)
+        {
+            var playerOne = players.FirstOrDefault(p => p.Id == idFirst);
+            var playerTwo = players.FirstOrDefault(p => p.Id == idTwo);
+
+            if (playerOne == null || playerTwo == null)
+            {
+                throw new ArgumentException($"Неправильные id игроков");
+            }
+            
+            var rand = new Random();
+            int score = rand.Next(0, 100);
+            int result = rand.Next(0,2);
+            if(result == 0)
+            {
+                playerOne.Score += score;
+                playerTwo.Score -= score;
+                return $"Выиграл первый + {score} очков второй проиграл - {score}";
+            }
+            playerOne.Score -= score;
+            playerTwo.Score += score;
+            return $"$Выиграл второй +  {score} очков первый проиграл - {score}"
+;        }
 
     }
 }
