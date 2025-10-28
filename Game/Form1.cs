@@ -19,7 +19,20 @@ namespace Game
             InitializeComponent();
         }
         private Logic logic = new Logic(false);
-        private void button1_Click(object sender, EventArgs e) // create
+
+        private void button6_Click(object sender, EventArgs e) //Dapper
+        {
+           logic = new Logic(true);
+            MessageBox.Show("Включен Dapper", "Успех", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
+        private void button7_Click(object sender, EventArgs e) //Entity
+        {
+            logic = new Logic(false);
+            MessageBox.Show("Включен Entity!", "Успех", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
+        private void button1_Click_1(object sender, EventArgs e) // create
         {
             try
             {
@@ -27,8 +40,8 @@ namespace Game
                 int level = int.Parse(textBoxLevel.Text);
                 int score = int.Parse(textBoxScore.Text);
                 string rank = textBoxRank.Text;
-                DateTime date = DateTime.Parse(dateTimePicker1.Text); 
-               
+                DateTime date = DateTime.Parse(dateTimePicker1.Text);
+
                 logic.Create(name, level, score, rank, date);
 
                 MessageBox.Show("Игрок создан!", "Успех", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -41,12 +54,8 @@ namespace Game
             {
                 MessageBox.Show($"Ошибка: {ex.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-
         }
-
-
-
-        private void button3_Click(object sender, EventArgs e) //delete
+        private void button3_Click_1(object sender, EventArgs e) //delete
         {
             try
             {
@@ -62,6 +71,7 @@ namespace Game
                 MessageBox.Show($"Ошибка: {ex.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
+
         private void button4_Click(object sender, EventArgs e) // update
         {
             try

@@ -2,6 +2,7 @@
 using Model;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Reflection.Emit;
 using System.Text;
@@ -15,18 +16,26 @@ namespace BusinessLogic
     {
         private IRepository<Player> _repository;
 
+
+
         public Logic(bool useDapper)
-    {
-        if (useDapper)
         {
-            _repository = new DapperRepository();
+            if (useDapper)
+            {
+                
+                string connectionString = ConfigurationManager.ConnectionStrings["DefaultConnection"]?.ConnectionString;
+
+                if (string.IsNullOrEmpty(connectionString))
+                    throw new Exception("Connection string 'DefaultConnection' not found");
+
+                _repository = new DapperRepository(connectionString);
+            }
+            else
+            {
+                var context = new DataContext();
+                _repository = new EntityRepository(context);
+            }
         }
-        else
-        {
-            var context = new DataContext();
-            _repository = new EntityRepository(context);
-        }
-    }
 
         /// <summary>
         /// Валидация игрока
@@ -173,8 +182,8 @@ namespace BusinessLogic
 
         public string Battle(int idFirst, int idTwo)
         {
-            var playerOne = players.FirstOrDefault(p => p.Id == idFirst);
-            var playerTwo = players.FirstOrDefault(p => p.Id == idTwo);
+            var playerOne =  _repository.ReadById(idFirst);
+            var playerTwo = _repository.ReadById(idTwo);
 
             if (playerOne == null || playerTwo == null)
             {

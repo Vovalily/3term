@@ -25,6 +25,7 @@ namespace ConsoleApp1
                 Console.WriteLine("5. Группировка по рангу");
                 Console.WriteLine("6. Фильтр по дате");
                 Console.WriteLine("7. Сражение");
+                Console.WriteLine("8. Сменить Dapper или Entity");
                 Console.WriteLine("0. Выход");
                 Console.Write("Выберите действие: ");
 
@@ -54,6 +55,9 @@ namespace ConsoleApp1
                     case "7":
                         Battle();
                         break;
+                    case "8":
+                        Choose();
+                        break;
                     case "0":
                         exit = true;
                         break;
@@ -64,6 +68,28 @@ namespace ConsoleApp1
             }
         }
 
+        static void Choose()
+        {
+            try
+            {
+                Console.WriteLine("Выберите:");
+                Console.WriteLine("1 Dapper");
+                Console.WriteLine("2 Entity");
+                int choose = int.Parse(Console.ReadLine());
+                if (choose == 1)
+                {
+                    logic = new Logic(true);
+                }
+                else
+                {
+                    logic = new Logic(false);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Ошибка: {ex.Message}");
+            }
+        }
         static void CreatePlayer()
         {
             try

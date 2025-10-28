@@ -12,16 +12,12 @@ namespace DataAccessLayer
 {
     public class DapperRepository : IRepository<Player>
     {
-
         private string connectionString;
-
-        public DapperRepository()
+        public DapperRepository(string connectionString)
         {
-            this.connectionString = System.Configuration.ConfigurationManager
-                .ConnectionStrings["DefaultConnection"].ConnectionString;
+            this.connectionString = connectionString;
         }
 
-       
         public void Create(Player player)
         {
             string script = @"INSERT INTO Players (Name, Level, Score, Rank, RegistrationDate) 
