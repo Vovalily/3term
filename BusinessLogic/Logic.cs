@@ -14,10 +14,14 @@ namespace BusinessLogic
 {
     public class Logic
     {
+        /*public IRepository Repository { get; set; }
+
+        public Logic(IRepository repository) 
+        {
+            Repository = repository;
+        }
+        */
         private IRepository<Player> _repository;
-
-
-
         public Logic(bool useDapper)
         {
             if (useDapper)
@@ -36,7 +40,6 @@ namespace BusinessLogic
                 _repository = new EntityRepository(context);
             }
         }
-
         /// <summary>
         /// Валидация игрока
         /// </summary>

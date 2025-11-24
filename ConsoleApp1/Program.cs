@@ -79,10 +79,12 @@ namespace ConsoleApp1
                 if (choose == 1)
                 {
                     logic = new Logic(true);
+                    Console.WriteLine("Включен Dapper");
                 }
                 else
                 {
                     logic = new Logic(false);
+                    Console.WriteLine("Включен Entity");
                 }
             }
             catch (Exception ex)
