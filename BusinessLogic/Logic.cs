@@ -14,32 +14,16 @@ namespace BusinessLogic
 {
     public class Logic
     {
-        /*public IRepository Repository { get; set; }
-
-        public Logic(IRepository repository) 
+        private readonly IRepository<Player> Repository;
+        private readonly BattleService BattleService;
+        public Logic(IRepository<Player> repository, BattleService battleService)
         {
             Repository = repository;
+            BattleService = battleService;
         }
-        */
-        private IRepository<Player> _repository;
-        public Logic(bool useDapper)
-        {
-            if (useDapper)
-            {
-                
-                string connectionString = ConfigurationManager.ConnectionStrings["DefaultConnection"]?.ConnectionString;
 
-                if (string.IsNullOrEmpty(connectionString))
-                    throw new Exception("Connection string 'DefaultConnection' not found");
 
-                _repository = new DapperRepository(connectionString);
-            }
-            else
-            {
-                var context = new DataContext();
-                _repository = new EntityRepository(context);
-            }
-        }
+
         /// <summary>
         /// Валидация игрока
         /// </summary>
@@ -73,7 +57,7 @@ namespace BusinessLogic
             if (Validate( name, level, score, rank, time) == true)
             {
                 Player newPlayer = new Player(name, level, score, rank, time);
-                _repository.Create(newPlayer);
+                Repository.Create(newPlayer);
             }
             else
             {
@@ -88,7 +72,7 @@ namespace BusinessLogic
         public List<List<string>> ReadAll()
         {
             List<List<string>> allPlayers = new List<List<string>>();
-            foreach (Player player in _repository.ReadAll()) 
+            foreach (Player player in Repository.ReadAll()) 
             {
                 List<string> listPlayers = new List<string>
                 {
@@ -117,7 +101,7 @@ namespace BusinessLogic
         public void Update(int id, string name, int level, int score, string rank, DateTime time)
         {
 
-            var player = _repository.ReadById(id);
+            var player = Repository.ReadById(id);
 
             if (player == null)
             {
@@ -143,10 +127,10 @@ namespace BusinessLogic
         /// <exception cref="ArgumentException">Выводит сообщение при ошибке</exception>
         public void Delete(int id)
         {
-            var player = _repository.ReadById(id);
+            var player = Repository.ReadById(id);
             if (player != null)
             {
-                _repository.Delete(player);
+                Repository.Delete(player);
             }
             else
             {
@@ -160,7 +144,7 @@ namespace BusinessLogic
         public Dictionary<string, List<Player>> RankGroup()
         {
            
-            var players = _repository.ReadAll();
+            var players = Repository.ReadAll();
             var grouped = players
                             .GroupBy(p => p.Rank)
                             .ToDictionary(g => g.Key, g => g.ToList());
@@ -175,7 +159,7 @@ namespace BusinessLogic
         /// <returns>Список игроков зарегистрированных в выбранный промежуток</returns>
         public List<Player> DateGroup(DateTime startDate, DateTime endDate)
         {
-            var players = _repository.ReadAll();
+            var players = Repository.ReadAll();
             var filteredPlayers = players
                 .Where(p => p.RegistrationDate >= startDate && p.RegistrationDate <= endDate)
                 .ToList();
@@ -183,29 +167,25 @@ namespace BusinessLogic
             return filteredPlayers;
         }
 
-        public string Battle(int idFirst, int idTwo)
+        public string Battle(int idFirst, int idSecond)
         {
-            var playerOne =  _repository.ReadById(idFirst);
-            var playerTwo = _repository.ReadById(idTwo);
+            var playerOne = Repository.ReadById(idFirst);
+            var playerTwo = Repository.ReadById(idSecond);
 
             if (playerOne == null || playerTwo == null)
-            {
-                throw new ArgumentException($"Неправильные id игроков");
-            }
-            
-            var rand = new Random();
-            int score = rand.Next(0, 100);
-            int result = rand.Next(0,2);
-            if(result == 0)
-            {
-                playerOne.Score += score;
-                playerTwo.Score -= score;
-                return $"Выиграл первый + {score} очков второй проиграл - {score}";
-            }
-            playerOne.Score -= score;
-            playerTwo.Score += score;
-            return $"$Выиграл второй +  {score} очков первый проиграл - {score}"
-;        }
+                throw new ArgumentException("Один из игроков не найден");
+
+            var (winner, loser, score) = BattleService.Execute(playerOne, playerTwo);
+
+            winner.Score += score;
+            loser.Score -= score;
+
+            Repository.Update(winner);
+            Repository.Update(loser);
+
+            return $"Победил {winner.Name}! +{score} очков. " +
+                   $"Проиграл {loser.Name}! -{score} очков.";
+        }
 
     }
 }

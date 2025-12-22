@@ -1,4 +1,6 @@
 ﻿using BusinessLogic;
+using Model;
+using Ninject;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -7,29 +9,41 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web.UI.WebControls;
 using System.Windows.Forms;
-using Model;
+using Ninject.Modules;
 
 namespace Game
 {
     public partial class Form1 : Form
     {
-        public Form1()
+        private IKernel ninjectKernel;
+        private Logic logic;
+        public Form1(IKernel kernel)
         {
             InitializeComponent();
+            ninjectKernel = kernel;
+            logic = ninjectKernel.Get<Logic>();
+            RefreshGrid();
         }
-        private Logic logic = new Logic(false);
+        
 
         private void button6_Click(object sender, EventArgs e) //Dapper
         {
-           logic = new Logic(true);
-            MessageBox.Show("Включен Dapper", "Успех", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+            ninjectKernel.Unload("BusinessLogic.SimpleConfigModule");
+            ninjectKernel.Load(new SimpleConfigModule(true));
+            logic = ninjectKernel.Get<Logic>();
+            MessageBox.Show("Включен Dapper");
         }
 
         private void button7_Click(object sender, EventArgs e) //Entity
         {
-            logic = new Logic(false);
+            ninjectKernel.Unload("BusinessLogic.SimpleConfigModule");
+            ninjectKernel.Load(new SimpleConfigModule(false));
+            logic = ninjectKernel.Get<Logic>();
             MessageBox.Show("Включен Entity!", "Успех", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
         }
 
         private void button1_Click_1(object sender, EventArgs e) // create

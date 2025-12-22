@@ -1,18 +1,25 @@
-﻿using System;
+﻿using BusinessLogic;
+using Model;
+using Ninject;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using BusinessLogic;
-using Model;
+using System.Web.UI.WebControls;
 namespace ConsoleApp1
 {
     public class Program
     {
-        static Logic logic = new Logic(true);
+
+        private static Logic logic;
+        private static IKernel ninjectKernel;
 
         static void Main(string[] args)
         {
+            ninjectKernel = new StandardKernel(new SimpleConfigModule());
+            logic = ninjectKernel.Get<Logic>();
+
             bool exit = false;
 
             while (!exit)
@@ -78,12 +85,16 @@ namespace ConsoleApp1
                 int choose = int.Parse(Console.ReadLine());
                 if (choose == 1)
                 {
-                    logic = new Logic(true);
+                    ninjectKernel = new StandardKernel(new SimpleConfigModule(true));
+                    logic = ninjectKernel.Get<Logic>();
                     Console.WriteLine("Включен Dapper");
+
                 }
+
                 else
                 {
-                    logic = new Logic(false);
+                    ninjectKernel = new StandardKernel(new SimpleConfigModule(false));
+                    logic = ninjectKernel.Get<Logic>();
                     Console.WriteLine("Включен Entity");
                 }
             }

@@ -2,6 +2,7 @@
 using Model;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
@@ -13,9 +14,9 @@ namespace DataAccessLayer
     public class DapperRepository : IRepository<Player>
     {
         private string connectionString;
-        public DapperRepository(string connectionString)
+        public DapperRepository()
         {
-            this.connectionString = connectionString;
+            connectionString = ConfigurationManager.ConnectionStrings["DefaultConnection"]?.ConnectionString;
         }
 
         public void Create(Player player)

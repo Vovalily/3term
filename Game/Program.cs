@@ -1,9 +1,10 @@
-﻿using System;
+﻿using BusinessLogic;
+using Ninject;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using BusinessLogic;
 namespace Game
 {
     internal static class Program
@@ -16,7 +17,8 @@ namespace Game
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Form1());
+            var kernel = new StandardKernel(new SimpleConfigModule(false));
+            Application.Run(new Form1(kernel));
         }
     }
 }
